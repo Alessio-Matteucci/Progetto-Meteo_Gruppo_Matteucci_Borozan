@@ -46,6 +46,16 @@ export default function ExplorePage() {
     setWeatherData(null); // Reset dati meteo durante il caricamento
   };
 
+  const handleGlobePickLocation = (latitude, longitude) => {
+    handleLocationSelect({
+      latitude,
+      longitude,
+      name: 'Punto selezionato',
+      country: 'Coordinate',
+      admin1: null,
+    });
+  };
+
   return (
     <Box
       sx={{
@@ -77,6 +87,7 @@ export default function ExplorePage() {
             targetLat={selectedLocation?.latitude || null}
             targetLon={selectedLocation?.longitude || null}
             isAnimating={isAnimating}
+            onPickLocation={handleGlobePickLocation}
           />
         </Box>
 

@@ -11,6 +11,11 @@ export default function WeatherPanel({ weatherData, locationData }) {
 
   const current = weatherData.current;
   const daily = weatherData.daily;
+  const formatCoord = (value, posLabel, negLabel) => {
+    const n = Number(value);
+    const label = n >= 0 ? posLabel : negLabel;
+    return `${Math.abs(n).toFixed(4)}°${label}`;
+  };
 
   return (
     <Box sx={{ mt: 4, mb: 4 }}>
@@ -28,7 +33,8 @@ export default function WeatherPanel({ weatherData, locationData }) {
           {locationData.admin1 && `, ${locationData.admin1}`}
         </Typography>
         <Typography variant="subtitle1" sx={{ color: 'rgba(255, 255, 255, 0.7)', mb: 3 }}>
-          {locationData.country} • {locationData.latitude.toFixed(4)}°N, {locationData.longitude.toFixed(4)}°E
+          {(locationData.country || '—')} • {formatCoord(locationData.latitude, 'N', 'S')},{' '}
+          {formatCoord(locationData.longitude, 'E', 'W')}
         </Typography>
 
         <Divider sx={{ my: 3, backgroundColor: 'rgba(255, 255, 255, 0.2)' }} />
