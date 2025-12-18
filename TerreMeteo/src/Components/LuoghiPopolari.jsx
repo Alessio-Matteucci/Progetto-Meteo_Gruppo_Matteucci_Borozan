@@ -1,88 +1,50 @@
-import { Box, Typography, Grid, Paper, Button } from '@mui/material';
+import { Box, Typography, Button, Grid } from '@mui/material';
 
 /**
- * Componente per visualizzare luoghi popolari da selezionare rapidamente
+ * Componente per mostrare luoghi popolari da selezionare rapidamente
  */
 export default function PopularLocations({ onLocationSelect }) {
-  const popularLocations = [
-    { name: 'Roma', country: 'Italia', latitude: 41.9028, longitude: 12.4964, admin1: 'Lazio' },
-    { name: 'Milano', country: 'Italia', latitude: 45.4642, longitude: 9.1900, admin1: 'Lombardia' },
-    { name: 'New York', country: 'Stati Uniti', latitude: 40.7128, longitude: -74.0060, admin1: 'New York' },
-    { name: 'Londra', country: 'Regno Unito', latitude: 51.5074, longitude: -0.1278, admin1: 'Inghilterra' },
-    { name: 'Parigi', country: 'Francia', latitude: 48.8566, longitude: 2.3522, admin1: 'Île-de-France' },
-    { name: 'Tokyo', country: 'Giappone', latitude: 35.6762, longitude: 139.6503, admin1: 'Tokyo' },
-    { name: 'Sydney', country: 'Australia', latitude: -33.8688, longitude: 151.2093, admin1: 'New South Wales' },
-    { name: 'Dubai', country: 'Emirati Arabi Uniti', latitude: 25.2048, longitude: 55.2708, admin1: 'Dubai' },
+  const popularCities = [
+    { name: 'Roma', country: 'Italia', lat: 41.9028, lon: 12.4964 },
+    { name: 'Milano', country: 'Italia', lat: 45.4642, lon: 9.1900 },
+    { name: 'Parigi', country: 'Francia', lat: 48.8566, lon: 2.3522 },
+    { name: 'Londra', country: 'Regno Unito', lat: 51.5074, lon: -0.1278 },
+    { name: 'New York', country: 'USA', lat: 40.7128, lon: -74.0060 },
+    { name: 'Tokyo', country: 'Giappone', lat: 35.6762, lon: 139.6503 },
+    { name: 'Sydney', country: 'Australia', lat: -33.8688, lon: 151.2093 },
+    { name: 'Dubai', country: 'Emirati Arabi', lat: 25.2048, lon: 55.2708 },
   ];
 
-  const handleLocationClick = (location) => {
-    onLocationSelect(location);
+  const handleClick = (city) => {
+    onLocationSelect({
+      latitude: city.lat,
+      longitude: city.lon,
+      name: city.name,
+      country: city.country,
+    });
   };
 
   return (
     <Box sx={{ mt: 4, mb: 4 }}>
-      <Typography 
-        variant="h5" 
-        sx={{ 
-          color: 'white', 
-          mb: 3, 
-          fontWeight: 'bold',
-          textAlign: 'center'
-        }}
-      >
+      <Typography variant="h6" sx={{ color: 'white', mb: 2, textAlign: 'center' }}>
         Luoghi Popolari
       </Typography>
-      
-      <Grid container spacing={2}>
-        {popularLocations.map((location, index) => (
-          <Grid item xs={6} sm={4} md={3} key={index}>
+      <Grid container spacing={2} justifyContent="center">
+        {popularCities.map((city, index) => (
+          <Grid item key={index}>
             <Button
-              fullWidth
-              onClick={() => handleLocationClick(location)}
+              variant="outlined"
+              onClick={() => handleClick(city)}
               sx={{
-                p: 0,
-                textTransform: 'none',
+                color: 'white',
+                borderColor: 'rgba(255, 255, 255, 0.3)',
                 '&:hover': {
-                  transform: 'translateY(-2px)',
+                  borderColor: 'rgba(255, 255, 255, 0.6)',
+                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
                 },
-                transition: 'transform 0.2s',
               }}
             >
-              <Paper
-                sx={{
-                  p: 2,
-                  width: '100%',
-                  textAlign: 'center',
-                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                  backdropFilter: 'blur(10px)',
-                  border: '1px solid rgba(255, 255, 255, 0.2)',
-                  borderRadius: 2,
-                  '&:hover': {
-                    backgroundColor: 'rgba(255, 255, 255, 0.15)',
-                    borderColor: 'rgba(255, 255, 255, 0.4)',
-                  },
-                }}
-              >
-                <Typography 
-                  variant="h6" 
-                  sx={{ 
-                    color: 'white', 
-                    fontWeight: 'bold',
-                    mb: 0.5
-                  }}
-                >
-                  {location.name}
-                </Typography>
-                <Typography 
-                  variant="caption" 
-                  sx={{ 
-                    color: 'rgba(255, 255, 255, 0.7)',
-                    display: 'block'
-                  }}
-                >
-                  {location.country}
-                </Typography>
-              </Paper>
+              {city.name}
             </Button>
           </Grid>
         ))}
