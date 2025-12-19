@@ -1,4 +1,4 @@
-import { Box, Typography, Button, Grid } from '@mui/material';
+import { Box, Typography, Button } from '@mui/material';
 
 /**
  * Componente per mostrare luoghi popolari da selezionare rapidamente
@@ -25,30 +25,97 @@ export default function PopularLocations({ onLocationSelect }) {
   };
 
   return (
-    <Box sx={{ mt: 4, mb: 4 }}>
-      <Typography variant="h6" sx={{ color: 'white', mb: 2, textAlign: 'center' }}>
-        Luoghi Popolari
-      </Typography>
-      <Grid container spacing={2} justifyContent="center">
+    <Box 
+      sx={{ 
+        mt: 4, 
+        mb: 4,
+        backgroundColor: '#E9EEF3',
+        borderRadius: '12px',
+        padding: '16px',
+        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+      }}
+    >
+      {/* Parte superiore con div più opaco */}
+      <Box
+        sx={{
+          mb: 2,
+        }}
+      >
+        <Box
+          sx={{
+            backgroundColor: 'rgba(216, 225, 234, 0.8)',
+            borderRadius: '12px',
+            padding: '12px 16px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <Typography 
+            sx={{ 
+              color: '#101828',
+              fontSize: '16px',
+              fontWeight: 500,
+              textAlign: 'center',
+            }}
+          >
+            i posti piu cercati
+          </Typography>
+        </Box>
+      </Box>
+
+      {/* Lista dei chip delle città */}
+      <Box
+        sx={{
+          display: 'flex',
+          gap: '12px',
+          padding: '12px',
+          overflowX: 'auto',
+          WebkitOverflowScrolling: 'touch',
+          alignItems: 'center',
+          justifyContent: 'flex-start',
+          '&::-webkit-scrollbar': {
+            height: '6px',
+          },
+          '&::-webkit-scrollbar-track': {
+            background: 'rgba(0, 0, 0, 0.1)',
+            borderRadius: '3px',
+          },
+          '&::-webkit-scrollbar-thumb': {
+            background: 'rgba(0, 0, 0, 0.3)',
+            borderRadius: '3px',
+          },
+        }}
+      >
         {popularCities.map((city, index) => (
-          <Grid item key={index}>
-            <Button
-              variant="outlined"
-              onClick={() => handleClick(city)}
-              sx={{
-                color: 'white',
-                borderColor: 'rgba(255, 255, 255, 0.3)',
-                '&:hover': {
-                  borderColor: 'rgba(255, 255, 255, 0.6)',
-                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                },
-              }}
-            >
-              {city.name}
-            </Button>
-          </Grid>
+          <Button
+            key={index}
+            onClick={() => handleClick(city)}
+            sx={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px',
+              padding: '8px 14px',
+              borderRadius: '9999px',
+              background: '#D8E1EA',
+              border: '1px solid rgba(16, 24, 40, 0.06)',
+              fontSize: '14px',
+              fontWeight: 500,
+              whiteSpace: 'nowrap',
+              color: '#101828',
+              textTransform: 'none',
+              transition: 'transform 160ms ease, box-shadow 160ms ease',
+              '&:hover': {
+                transform: 'translateY(-2px)',
+                boxShadow: '0 6px 18px rgba(16, 24, 40, 0.06)',
+                backgroundColor: '#D8E1EA',
+              },
+            }}
+          >
+            {city.name}
+          </Button>
         ))}
-      </Grid>
+      </Box>
     </Box>
   );
 }

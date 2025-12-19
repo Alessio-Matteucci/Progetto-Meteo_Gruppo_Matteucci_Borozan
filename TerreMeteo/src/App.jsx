@@ -34,6 +34,7 @@ function App() {
           <Route path="/" element={<WelcomePage />} />
           <Route path="/explore" element={<ExplorePage />} />
           <Route path="*" element={<NotFoundPage />} />
+          <Route path="/robots.txt" element={"robots.txt"} />
         </Routes>
       </Router>
     </ThemeProvider>

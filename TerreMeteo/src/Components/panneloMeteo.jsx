@@ -24,7 +24,7 @@ export default function WeatherPanel({ weatherData, locationData }) {
           p: 3,
           backgroundColor: 'rgba(255, 255, 255, 0.1)',
           backdropFilter: 'blur(10px)',
-          borderRadius: 2,
+          borderRadius: '12px',
         }}
       >
         {/* Informazioni geografiche */}
@@ -114,6 +114,7 @@ export default function WeatherPanel({ weatherData, locationData }) {
                       textAlign: 'center',
                       backgroundColor: 'rgba(255, 255, 255, 0.05)',
                       border: '1px solid rgba(255, 255, 255, 0.1)',
+                      borderRadius: '12px',
                     }}
                   >
                     <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.7)', mb: 1 }}>

@@ -78,7 +78,7 @@ export default function ExplorePage() {
             minHeight: 500,
             position: 'relative',
             mb: 4,
-            borderRadius: 2,
+            borderRadius: '12px',
             overflow: 'hidden',
             boxShadow: '0 20px 60px rgba(0, 0, 0, 0.5)',
           }}

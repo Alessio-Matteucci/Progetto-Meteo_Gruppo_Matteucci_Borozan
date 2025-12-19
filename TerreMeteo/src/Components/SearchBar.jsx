@@ -49,7 +49,7 @@ export default function SearchBar({ onCitySelect }) {
       <TextField
         fullWidth
         variant="outlined"
-        placeholder="Cerca una città ..."
+        placeholder="inserire citta"
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
         onFocus={() => {
@@ -57,8 +57,9 @@ export default function SearchBar({ onCitySelect }) {
         }}
         sx={{
           '& .MuiOutlinedInput-root': {
-            backgroundColor: 'rgba(255, 255, 255, 0.1)',
+            backgroundColor: 'rgba(0, 0, 0, 0.8)',
             color: 'white',
+            borderRadius: '12px',
             '& fieldset': {
               borderColor: 'rgba(255, 255, 255, 0.3)',
             },
@@ -75,50 +76,62 @@ export default function SearchBar({ onCitySelect }) {
         }}
       />
       
-      {showResults && results.length > 0 && (
-        <Paper
-          sx={{
-            position: 'absolute',
-            top: '100%',
-            left: 0,
-            right: 0,
-            mt: 1,
-            maxHeight: 300,
-            overflow: 'auto',
-            backgroundColor: 'rgba(30, 30, 30, 0.95)',
-            zIndex: 1000,
-          }}
-        >
-          <List>
-            {results.map((city, index) => (
-              <ListItem
-                key={index}
-                button
-                onClick={() => handleCitySelect(city)}
-                sx={{
-                  '&:hover': {
-                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                  },
-                }}
-              >
-                <ListItemText
-                  primary={
-                    <Typography sx={{ color: 'white' }}>
-                      {city.name}
-                      {city.admin1 && `, ${city.admin1}`}
-                    </Typography>
-                  }
-                  secondary={
-                    <Typography sx={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '0.85rem' }}>
-                      {city.country}
-                    </Typography>
-                  }
-                />
-              </ListItem>
-            ))}
-          </List>
-        </Paper>
-      )}
+      <Box
+        sx={{
+          maxHeight: showResults && results.length > 0 ? '420px' : '0',
+          overflow: 'hidden',
+          transition: 'max-height 320ms ease',
+          mt: 1,
+        }}
+      >
+        {showResults && results.length > 0 && (
+          <Paper
+            sx={{
+              borderRadius: '12px',
+              maxHeight: 300,
+              overflow: 'auto',
+              backgroundColor: 'rgba(30, 30, 30, 0.95)',
+            }}
+          >
+            <Box sx={{ p: 1 }}>
+              <Typography sx={{ color: 'rgba(255, 255, 255, 0.7)', px: 2, py: 1, fontSize: '0.875rem' }}>
+                Suggerimenti
+              </Typography>
+            </Box>
+            <List>
+              {results.map((city, index) => (
+                <ListItem
+                  key={index}
+                  button
+                  onClick={() => handleCitySelect(city)}
+                  sx={{
+                    borderRadius: '12px',
+                    mx: 1,
+                    mb: 0.5,
+                    '&:hover': {
+                      backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                    },
+                  }}
+                >
+                  <ListItemText
+                    primary={
+                      <Typography sx={{ color: 'white' }}>
+                        {city.name}
+                        {city.admin1 && `, ${city.admin1}`}
+                      </Typography>
+                    }
+                    secondary={
+                      <Typography sx={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '0.85rem' }}>
+                        {city.country}
+                      </Typography>
+                    }
+                  />
+                </ListItem>
+              ))}
+            </List>
+          </Paper>
+        )}
+      </Box>
     </Box>
   );
 }
