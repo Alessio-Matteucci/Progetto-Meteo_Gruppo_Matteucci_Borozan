@@ -229,7 +229,7 @@ function LocationMarker({ lat, lon, latLonToVector3 }) {
 
   return (
     // Riduce la dimensione complessiva del marker (sfera + anello + cono)
-    <group ref={markerRef} scale={0.25}>
+    <group ref={markerRef} scale={0.15}>
       {/* Marker principale */}
       <mesh>
         <sphereGeometry args={[0.06, 16, 16]} />
