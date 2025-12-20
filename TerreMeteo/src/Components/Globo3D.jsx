@@ -5,6 +5,7 @@ import * as THREE from 'three';
 import { Box, Typography, Paper, Grid, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { getWeatherDescription, getWeatherIcon } from '../services/weatherService';
+import { coordinateUtils } from '../hooks/useCoordinateConversion';
 
 /**
  * Componente del globo terrestre 3D realistico
@@ -38,52 +39,9 @@ function Globe({ targetLat, targetLon, isAnimating, onPickLocation, weatherData,
     }
   }, [earthTexture, cloudsTexture]);
 
-  /**
-   * Conversione LAT/LON -> vettore 3D **coerente con SphereGeometry** (Three.js).
-   * SphereGeometry genera i vertici così:
-   *   x = -r cos(phi) sin(theta)
-   *   y =  r cos(theta)
-   *   z =  r sin(phi) sin(theta)
-   * dove:
-   *  - phi  = (lon + 180) in radianti (u = 0..1)
-   *  - theta = (90 - lat) in radianti (v = 0..1)
-   *
-   * In pratica: Greenwich (lon=0) cade su +X (come nella texture standard).
-   */
-  const latLonToVector3 = (lat, lon, radius) => {
-    const phi = THREE.MathUtils.degToRad(lon + 180);
-    const theta = THREE.MathUtils.degToRad(90 - lat);
-
-    const x = -radius * Math.cos(phi) * Math.sin(theta);
-    const y = radius * Math.cos(theta);
-    const z = radius * Math.sin(phi) * Math.sin(theta);
-
-    return new THREE.Vector3(x, y, z);
-  };
-
-  /**
-   * Conversione vettore 3D (locale) -> LAT/LON coerente con latLonToVector3 (SphereGeometry).
-   */
-  const vector3ToLatLon = (vec) => {
-    const r = vec.length();
-    if (!r) return { lat: 0, lon: 0 };
-
-    // Clamp numerico per sicurezza
-    const y = THREE.MathUtils.clamp(vec.y / r, -1, 1);
-    const theta = Math.acos(y); // 0..PI
-    const lat = 90 - THREE.MathUtils.radToDeg(theta);
-
-    // Inverso di:
-    // x = -r cos(phi) sin(theta)
-    // z =  r sin(phi) sin(theta)
-    const phi = Math.atan2(vec.z, -vec.x); // -PI..PI (equivalente a 0..2PI)
-    let lon = THREE.MathUtils.radToDeg(phi) - 180;
-
-    // Normalizza a [-180, 180]
-    lon = ((lon + 180) % 360 + 360) % 360 - 180;
-
-    return { lat, lon };
-  };
+  // Usa le utility di conversione coordinate
+  const latLonToVector3 = coordinateUtils.latLonToVector3;
+  const vector3ToLatLon = coordinateUtils.vector3ToLatLon;
 
   const handleEarthDoubleClick = (e) => {
     e.stopPropagation();
@@ -246,12 +204,7 @@ function MarkerInfoPopup({ weatherData, locationData, onClose }) {
 
   const current = weatherData.current;
   const daily = weatherData.daily;
-
-  const formatCoord = (value, posLabel, negLabel) => {
-    const n = Number(value);
-    const label = n >= 0 ? posLabel : negLabel;
-    return `${Math.abs(n).toFixed(4)}°${label}`;
-  };
+  const formatCoord = coordinateUtils.formatCoordinate;
 
   return (
     <Paper

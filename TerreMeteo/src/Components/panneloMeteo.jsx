@@ -1,5 +1,6 @@
 import { Box, Typography, Paper, Grid, Divider } from '@mui/material';
 import { getWeatherDescription, getWeatherIcon } from '../services/weatherService';
+import { coordinateUtils } from '../hooks/useCoordinateConversion';
 
 /**
  * Componente per visualizzare i dati meteorologici e geografici
@@ -11,11 +12,7 @@ export default function WeatherPanel({ weatherData, locationData }) {
 
   const current = weatherData.current;
   const daily = weatherData.daily;
-  const formatCoord = (value, posLabel, negLabel) => {
-    const n = Number(value);
-    const label = n >= 0 ? posLabel : negLabel;
-    return `${Math.abs(n).toFixed(4)}°${label}`;
-  };
+  const formatCoord = coordinateUtils.formatCoordinate;
 
   return (
     <Box sx={{ mt: 4, mb: 4 }}>

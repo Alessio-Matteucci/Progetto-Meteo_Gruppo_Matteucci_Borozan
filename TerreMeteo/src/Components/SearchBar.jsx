@@ -1,126 +1,43 @@
-import { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import { TextField, Box, List, ListItem, ListItemText, Paper, Typography, IconButton, InputAdornment } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
-import { searchCity } from '../services/geocodingService';
+import { useCitySearch } from '../hooks/useCitySearch';
+import { useClickOutside } from '../hooks/useClickOutside';
+import { useSearchHandlers } from '../hooks/useSearchHandlers';
 
 /**
  * Componente barra di ricerca con autocompletamento
  */
 export default function SearchBar({ onCitySelect }) {
-  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
-  const [results, setResults] = useState([]);
   const [showResults, setShowResults] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const searchBarRef = useRef(null);
+  const { results, isLoading, performSearch } = useCitySearch(searchTerm);
+  const { handleCitySelect, handleSearchSubmit, handleKeyPress } = useSearchHandlers(onCitySelect);
+  
+  const searchBarRef = useClickOutside(() => {
+    setShowResults(false);
+  });
 
   useEffect(() => {
-    const delayDebounce = setTimeout(() => {
-      if (searchTerm.trim().length > 2) {
-        performSearch(searchTerm).then(() => {
-          // Mostra i risultati solo durante la digitazione automatica
-          setShowResults(true);
-        });
-      } else {
-        setResults([]);
-        setShowResults(false);
-      }
-    }, 300);
-
-    return () => clearTimeout(delayDebounce);
-  }, [searchTerm]);
-
-  // Chiudi i risultati quando si clicca fuori dalla barra di ricerca
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (searchBarRef.current && !searchBarRef.current.contains(event.target)) {
-        setShowResults(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
-
-  const performSearch = async (term) => {
-    setIsLoading(true);
-    const cities = await searchCity(term);
-    const lowerTerm = term.toLowerCase().trim();
-    
-    let finalResults = [...cities];
-    if (lowerTerm.length > 0 && (lowerTerm.includes('california') || lowerTerm.startsWith('calif') || lowerTerm === 'c' || lowerTerm === 'ca' || lowerTerm === 'cal')) {
-      finalResults = [{
-        name: 'california',
-        country: '...',
-        latitude: null,
-        longitude: null,
-      }, ...cities];
+    if (searchTerm.trim().length > 2 && results.length > 0) {
+      setShowResults(true);
+    } else if (searchTerm.trim().length <= 2) {
+      setShowResults(false);
     }
-    
-    setResults(finalResults);
-    setShowResults(finalResults.length > 0);
-    setIsLoading(false);
-    return finalResults;
-  };
+  }, [results, searchTerm]);
 
-  const handleCitySelect = (city) => {
+  const handleCityClick = (city) => {
     setSearchTerm(city.name);
     setShowResults(false);
-    
-    if (city.name === 'california' && city.country === '...' && !city.latitude) {
-      navigate('/media');
-      return;
-    }
-    
-    onCitySelect({
-      latitude: city.latitude,
-      longitude: city.longitude,
-      name: city.name,
-      country: city.country,
-      admin1: city.admin1,
-    });
+    handleCitySelect(city);
   };
 
   const handleSearchClick = async () => {
-    if (searchTerm.trim().length > 0) {
-      setShowResults(false);
-      const searchResults = await performSearch(searchTerm);
-      // Se c'è un risultato esatto, selezionalo
-      if (searchResults && searchResults.length > 0) {
-        const exactMatch = searchResults.find(city => 
-          city.name.toLowerCase() === searchTerm.toLowerCase().trim()
-        );
-        if (exactMatch) {
-          handleCitySelect(exactMatch);
-        } else {
-          // Se non c'è match esatto ma ci sono risultati, seleziona il primo
-          handleCitySelect(searchResults[0]);
-        }
-      }
-    }
+    await handleSearchSubmit(searchTerm, performSearch, setShowResults);
   };
 
-  const handleKeyPress = async (e) => {
-    if (e.key === 'Enter' && searchTerm.trim().length > 0) {
-      e.preventDefault();
-      setShowResults(false);
-      const searchResults = await performSearch(searchTerm);
-      // Se c'è un risultato esatto, selezionalo
-      if (searchResults && searchResults.length > 0) {
-        const exactMatch = searchResults.find(city => 
-          city.name.toLowerCase() === searchTerm.toLowerCase().trim()
-        );
-        if (exactMatch) {
-          handleCitySelect(exactMatch);
-        } else {
-          // Se non c'è match esatto ma ci sono risultati, seleziona il primo
-          handleCitySelect(searchResults[0]);
-        }
-      }
-    }
+  const handleEnterKey = async (e) => {
+    await handleKeyPress(e, searchTerm, performSearch, setShowResults);
   };
 
   return (
@@ -131,7 +48,7 @@ export default function SearchBar({ onCitySelect }) {
         placeholder="inserire citta"
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
-        onKeyPress={handleKeyPress}
+        onKeyPress={handleEnterKey}
         onFocus={() => {
           if (results.length > 0) setShowResults(true);
         }}
@@ -220,7 +137,7 @@ export default function SearchBar({ onCitySelect }) {
                 <ListItem
                   key={index}
                   button
-                  onClick={() => handleCitySelect(city)}
+                  onClick={() => handleCityClick(city)}
                   sx={{
                     borderRadius: '12px',
                     mx: 1,

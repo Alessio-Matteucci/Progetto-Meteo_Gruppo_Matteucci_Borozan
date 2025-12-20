@@ -1,65 +1,25 @@
-import { useState, useEffect } from 'react';
 import { Box, Container } from '@mui/material';
 import SearchBar from '../Components/SearchBar';
 import Globe3D from '../Components/Globo3D';
 import WeatherPanel from '../Components/panneloMeteo';
 import PopularLocations from '../Components/LuoghiPopolari';
 import LoadingSpinner from '../Components/CaricamentoAPI';
-import { getWeatherData } from '../services/weatherService';
+import { useLocationSelection } from '../hooks/useLocationSelection';
+import { useWeatherData } from '../hooks/useWeatherData';
 
 /**
  * Pagina principale con globo 3D, ricerca e dati meteo
  */
 export default function ExplorePage() {
-  const [selectedLocation, setSelectedLocation] = useState(null);
-  const [weatherData, setWeatherData] = useState(null);
-  const [isAnimating, setIsAnimating] = useState(false);
-  const [isLoadingWeather, setIsLoadingWeather] = useState(false);
+  const {
+    selectedLocation,
+    isAnimating,
+    handleLocationSelect,
+    handleResetView,
+    handleGlobePickLocation,
+  } = useLocationSelection();
 
-  useEffect(() => {
-    if (selectedLocation) {
-      // Avvia animazione
-      setIsAnimating(true);
-      
-      // Recupera dati meteo
-      setIsLoadingWeather(true);
-      const fetchWeather = async () => {
-        const data = await getWeatherData(
-          selectedLocation.latitude,
-          selectedLocation.longitude
-        );
-        setWeatherData(data);
-        setIsLoadingWeather(false);
-      };
-
-      fetchWeather();
-
-      // Ferma animazione dopo un po'
-      setTimeout(() => {
-        setIsAnimating(false);
-      }, 2000);
-    }
-  }, [selectedLocation]);
-
-  const handleLocationSelect = (location) => {
-    setSelectedLocation(location);
-    setWeatherData(null); // Reset dati meteo durante il caricamento
-  };
-
-  const handleGlobePickLocation = (latitude, longitude) => {
-    handleLocationSelect({
-      latitude,
-      longitude,
-      name: 'Punto selezionato',
-      country: 'Coordinate',
-      admin1: null,
-    });
-  };
-
-  const handleResetView = () => {
-    setSelectedLocation(null);
-    setWeatherData(null);
-  };
+  const { weatherData, isLoading: isLoadingWeather } = useWeatherData(selectedLocation);
 
   return (
     <Box
