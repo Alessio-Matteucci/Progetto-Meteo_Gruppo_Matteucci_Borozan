@@ -69,21 +69,20 @@ function Globe({ targetLat, targetLon, isAnimating, onPickLocation, weatherData,
       const distance = THREE.MathUtils.clamp(desiredDistanceRef.current, 0.2, 6);
       desiredCameraPosRef.current.copy(targetPos).add(normal.multiplyScalar(distance));
       isResettingRef.current = false;
-    } else {
-      // Reset quando non c'è target
-      desiredDistanceRef.current = 5;
-      desiredTargetRef.current.set(0, 0, 0);
-      desiredCameraPosRef.current.set(0, 0, 5);
     }
+    // Quando non c'è target, NON resettiamo automaticamente la camera
+    // Lasciamo l'utente libero di navigare il globo
   }, [targetLat, targetLon]);
 
-  // Reset forzato della camera quando viene richiesto
+  // Reset forzato della camera solo quando viene esplicitamente richiesto (chiusura popup)
   useEffect(() => {
     if (shouldResetCamera && targetLat === null && targetLon === null) {
+      // Usa la stessa posizione iniziale della camera per evitare schermo nero
       isResettingRef.current = true;
       desiredDistanceRef.current = 5;
       desiredTargetRef.current.set(0, 0, 0);
       desiredCameraPosRef.current.set(0, 0, 5);
+      // Il flag viene resettato nel componente padre (Globe3D)
     }
   }, [shouldResetCamera, targetLat, targetLon]);
 
@@ -92,7 +91,8 @@ function Globe({ targetLat, targetLon, isAnimating, onPickLocation, weatherData,
 
     // Se stiamo resettando la camera, forziamo l'animazione anche se isAnimating è false
     if (isResettingRef.current) {
-      const t = 0.08;
+      // Usa un lerp più veloce per il reset per evitare di passare attraverso posizioni intermedie
+      const t = 0.15; // Più veloce del normale (0.08)
       state.camera.position.lerp(desiredCameraPosRef.current, t);
       controlsRef.current.target.lerp(desiredTargetRef.current, t);
       controlsRef.current.update();
@@ -100,9 +100,19 @@ function Globe({ targetLat, targetLon, isAnimating, onPickLocation, weatherData,
       // Controlla se abbiamo raggiunto la posizione desiderata
       const distance = state.camera.position.distanceTo(desiredCameraPosRef.current);
       const targetDistance = controlsRef.current.target.distanceTo(desiredTargetRef.current);
-      if (distance < 0.01 && targetDistance < 0.01) {
+      if (distance < 0.1 && targetDistance < 0.1) {
+        // Reset completato: imposta direttamente la posizione finale per evitare schermo nero
+        state.camera.position.copy(desiredCameraPosRef.current);
+        controlsRef.current.target.copy(desiredTargetRef.current);
+        controlsRef.current.update();
         isResettingRef.current = false;
       }
+      return;
+    }
+
+    // Se non c'è una location selezionata E non stiamo resettando, 
+    // non forziamo mai la camera - lascia l'utente completamente libero di navigare
+    if (targetLat === null || targetLon === null) {
       return;
     }
 
@@ -209,12 +219,12 @@ function MarkerInfoPopup({ weatherData, locationData, onClose }) {
   return (
     <Paper
       sx={{
-        p: 1.5,
-        minWidth: 200,
-        maxWidth: 250,
+        p: { xs: 1.25, sm: 1.5 },
+        minWidth: { xs: 180, sm: 200 },
+        maxWidth: { xs: '100%', sm: 250 },
         backgroundColor: 'rgba(26, 26, 46, 0.95)',
         backdropFilter: 'blur(20px)',
-        borderRadius: '12px',
+        borderRadius: { xs: '10px', sm: '12px' },
         border: '1px solid rgba(102, 126, 234, 0.3)',
         boxShadow: '0 8px 32px rgba(0, 0, 0, 0.5)',
         position: 'relative',
@@ -226,10 +236,10 @@ function MarkerInfoPopup({ weatherData, locationData, onClose }) {
         onClick={onClose}
         sx={{
           position: 'absolute',
-          top: 4,
-          right: 4,
+          top: { xs: 2, sm: 4 },
+          right: { xs: 2, sm: 4 },
           color: 'rgba(255, 255, 255, 0.7)',
-          padding: '4px',
+          padding: { xs: '2px', sm: '4px' },
           '&:hover': {
             color: 'white',
             backgroundColor: 'rgba(102, 126, 234, 0.2)',
@@ -238,59 +248,103 @@ function MarkerInfoPopup({ weatherData, locationData, onClose }) {
         }}
         size="small"
       >
-        <CloseIcon sx={{ fontSize: '16px' }} />
+        <CloseIcon sx={{ fontSize: { xs: '14px', sm: '16px' } }} />
       </IconButton>
 
       {/* Informazioni geografiche */}
-      <Typography variant="body2" sx={{ color: 'white', mb: 0.5, fontWeight: 'bold', pr: 3, fontSize: '0.875rem' }}>
+      <Typography variant="body2" sx={{ 
+        color: 'white', 
+        mb: 0.5, 
+        fontWeight: 'bold', 
+        pr: { xs: 2.5, sm: 3 }, 
+        fontSize: { xs: '0.75rem', sm: '0.875rem' },
+        lineHeight: 1.3,
+      }}>
         {locationData.name}
         {locationData.admin1 && `, ${locationData.admin1}`}
       </Typography>
-      <Typography variant="caption" sx={{ color: 'rgba(255, 255, 255, 0.7)', mb: 1, display: 'block', fontSize: '0.7rem' }}>
+      <Typography variant="caption" sx={{ 
+        color: 'rgba(255, 255, 255, 0.7)', 
+        mb: 1, 
+        display: 'block', 
+        fontSize: { xs: '0.65rem', sm: '0.7rem' },
+        lineHeight: 1.2,
+      }}>
         {locationData.country || '—'} • {formatCoord(locationData.latitude, 'N', 'S')},{' '}
         {formatCoord(locationData.longitude, 'E', 'W')}
       </Typography>
 
       {/* Dati meteo attuali */}
       {current && (
-        <Box sx={{ mb: 1.5 }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
+        <Box sx={{ mb: { xs: 1, sm: 1.5 } }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: { xs: 0.75, sm: 1 } }}>
             <Box>
-              <Typography variant="h6" sx={{ color: 'white', fontWeight: 'bold', fontSize: '1.25rem', lineHeight: 1.2 }}>
+              <Typography variant="h6" sx={{ 
+                color: 'white', 
+                fontWeight: 'bold', 
+                fontSize: { xs: '1rem', sm: '1.25rem' }, 
+                lineHeight: 1.2 
+              }}>
                 {current.temperature_2m.toFixed(1)}°C
               </Typography>
-              <Typography variant="caption" sx={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '0.7rem' }}>
+              <Typography variant="caption" sx={{ 
+                color: 'rgba(255, 255, 255, 0.7)', 
+                fontSize: { xs: '0.65rem', sm: '0.7rem' },
+                display: 'block',
+              }}>
                 {getWeatherDescription(current.weather_code)}
               </Typography>
             </Box>
-            <Typography sx={{ fontSize: '2rem', lineHeight: 1 }}>
+            <Typography sx={{ fontSize: { xs: '1.5rem', sm: '2rem' }, lineHeight: 1 }}>
               {getWeatherIcon(current.weather_code)}
             </Typography>
           </Box>
 
-          <Grid container spacing={1}>
+          <Grid container spacing={{ xs: 0.75, sm: 1 }}>
             <Grid item xs={6}>
               <Box>
-                <Typography variant="caption" sx={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '0.65rem' }}>
+                <Typography variant="caption" sx={{ 
+                  color: 'rgba(255, 255, 255, 0.6)', 
+                  fontSize: { xs: '0.6rem', sm: '0.65rem' },
+                  display: 'block',
+                }}>
                   Umidità
                 </Typography>
-                <Typography variant="caption" sx={{ color: 'white', fontWeight: 600, fontSize: '0.75rem', display: 'block' }}>
+                <Typography variant="caption" sx={{ 
+                  color: 'white', 
+                  fontWeight: 600, 
+                  fontSize: { xs: '0.7rem', sm: '0.75rem' }, 
+                  display: 'block' 
+                }}>
                   {current.relative_humidity_2m}%
                 </Typography>
               </Box>
             </Grid>
             <Grid item xs={6}>
               <Box>
-                <Typography variant="caption" sx={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '0.65rem' }}>
+                <Typography variant="caption" sx={{ 
+                  color: 'rgba(255, 255, 255, 0.6)', 
+                  fontSize: { xs: '0.6rem', sm: '0.65rem' },
+                  display: 'block',
+                }}>
                   Vento
                 </Typography>
-                <Typography variant="caption" sx={{ color: 'white', fontWeight: 600, fontSize: '0.75rem', display: 'block' }}>
+                <Typography variant="caption" sx={{ 
+                  color: 'white', 
+                  fontWeight: 600, 
+                  fontSize: { xs: '0.7rem', sm: '0.75rem' }, 
+                  display: 'block' 
+                }}>
                   {current.wind_speed_10m.toFixed(1)} km/h
                 </Typography>
               </Box>
             </Grid>
             <Grid item xs={12}>
-              <Typography variant="caption" sx={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '0.65rem' }}>
+              <Typography variant="caption" sx={{ 
+                color: 'rgba(255, 255, 255, 0.6)', 
+                fontSize: { xs: '0.6rem', sm: '0.65rem' },
+                display: 'block',
+              }}>
                 Ora: {new Date(current.time).toLocaleTimeString('it-IT', {
                   hour: '2-digit',
                   minute: '2-digit',
@@ -303,27 +357,55 @@ function MarkerInfoPopup({ weatherData, locationData, onClose }) {
 
       {/* Previsioni giornaliere (prime 3) */}
       {daily && daily.time && daily.time.length > 0 && (
-        <Box sx={{ mt: 1.5, pt: 1.5, borderTop: '1px solid rgba(102, 126, 234, 0.2)' }}>
-          <Typography variant="caption" sx={{ color: 'rgba(255, 255, 255, 0.7)', mb: 0.75, display: 'block', fontSize: '0.7rem' }}>
+        <Box sx={{ 
+          mt: { xs: 1, sm: 1.5 }, 
+          pt: { xs: 1, sm: 1.5 }, 
+          borderTop: '1px solid rgba(102, 126, 234, 0.2)' 
+        }}>
+          <Typography variant="caption" sx={{ 
+            color: 'rgba(255, 255, 255, 0.7)', 
+            mb: { xs: 0.5, sm: 0.75 }, 
+            display: 'block', 
+            fontSize: { xs: '0.65rem', sm: '0.7rem' },
+          }}>
             Prossimi 3 giorni
           </Typography>
-          <Grid container spacing={0.5}>
+          <Grid container spacing={{ xs: 0.25, sm: 0.5 }}>
             {daily.time.slice(0, 3).map((date, index) => (
               <Grid item xs={4} key={index}>
                 <Box sx={{ textAlign: 'center' }}>
-                  <Typography variant="caption" sx={{ color: 'rgba(255, 255, 255, 0.6)', display: 'block', fontSize: '0.65rem' }}>
+                  <Typography variant="caption" sx={{ 
+                    color: 'rgba(255, 255, 255, 0.6)', 
+                    display: 'block', 
+                    fontSize: { xs: '0.6rem', sm: '0.65rem' },
+                    lineHeight: 1.2,
+                  }}>
                     {new Date(date).toLocaleDateString('it-IT', {
                       weekday: 'short',
                       day: 'numeric',
                     })}
                   </Typography>
-                  <Typography sx={{ color: 'white', my: 0.25, fontSize: '1.25rem', lineHeight: 1 }}>
+                  <Typography sx={{ 
+                    color: 'white', 
+                    my: { xs: 0.15, sm: 0.25 }, 
+                    fontSize: { xs: '1rem', sm: '1.25rem' }, 
+                    lineHeight: 1 
+                  }}>
                     {getWeatherIcon(daily.weather_code[index])}
                   </Typography>
-                  <Typography variant="caption" sx={{ color: 'white', fontWeight: 600, fontSize: '0.7rem' }}>
+                  <Typography variant="caption" sx={{ 
+                    color: 'white', 
+                    fontWeight: 600, 
+                    fontSize: { xs: '0.65rem', sm: '0.7rem' },
+                    display: 'block',
+                  }}>
                     {daily.temperature_2m_max[index].toFixed(0)}°
                   </Typography>
-                  <Typography variant="caption" sx={{ color: 'rgba(255, 255, 255, 0.6)', display: 'block', fontSize: '0.65rem' }}>
+                  <Typography variant="caption" sx={{ 
+                    color: 'rgba(255, 255, 255, 0.6)', 
+                    display: 'block', 
+                    fontSize: { xs: '0.6rem', sm: '0.65rem' },
+                  }}>
                     {daily.temperature_2m_min[index].toFixed(0)}°
                   </Typography>
                 </Box>
@@ -506,16 +588,12 @@ export default function Globe3D({ targetLat, targetLon, isAnimating, onPickLocat
     setShowPopup(false);
     setPopupPosition(null);
     setManuallyClosed(true);
-    // Attiva il reset della camera
+    // Attiva il reset della camera UNA sola volta quando si chiude il popup
     setShouldResetCamera(true);
-    // Resetta la visuale del globo quando il popup viene chiuso
+    // Resetta la selezione della location
     if (onResetView) {
       onResetView();
     }
-    // Resetta il flag dopo un breve delay per permettere al reset di essere processato
-    setTimeout(() => {
-      setShouldResetCamera(false);
-    }, 100);
   };
 
   const handlePositionUpdate = (position) => {
@@ -542,6 +620,17 @@ export default function Globe3D({ targetLat, targetLon, isAnimating, onPickLocat
       // Attiviamo l'updater anche quando non è ancora visibile per calcolare la posizione iniziale
     }
   }, [weatherData, locationData, targetLat, targetLon]);
+
+  // Reset del flag shouldResetCamera dopo che il reset è stato processato
+  useEffect(() => {
+    if (shouldResetCamera) {
+      // Aspetta che il reset sia stato processato nel componente Globe
+      const timer = setTimeout(() => {
+        setShouldResetCamera(false);
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [shouldResetCamera]);
 
   return (
     <div ref={canvasContainerRef} style={{ width: '100%', height: '100%', background: '#000', position: 'relative' }}>
@@ -576,9 +665,14 @@ export default function Globe3D({ targetLat, targetLon, isAnimating, onPickLocat
         <Box
           sx={{
             position: 'fixed',
-            left: `${popupPosition.x}px`,
-            top: `${popupPosition.y}px`,
-            transform: 'translate(20px, -50%)',
+            left: { xs: '50%', sm: `${popupPosition.x}px` },
+            top: { xs: '50%', sm: `${popupPosition.y}px` },
+            transform: { 
+              xs: 'translate(-50%, -50%)', 
+              sm: 'translate(20px, -50%)' 
+            },
+            width: { xs: '90%', sm: 'auto' },
+            maxWidth: { xs: '350px', sm: '250px' },
             zIndex: 1000,
             pointerEvents: 'auto',
           }}
