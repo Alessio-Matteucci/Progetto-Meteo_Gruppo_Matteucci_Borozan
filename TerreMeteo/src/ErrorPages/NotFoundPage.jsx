@@ -22,40 +22,68 @@ export default function NotFoundPage() {
         px: 3,
       }}
     >
-      <Container maxWidth="md">
-        <Box sx={{ mb: 4 }}>
+      <Container maxWidth="md" sx={{ px: { xs: 2, sm: 3 } }}>
+        <Box sx={{ mb: { xs: 2, sm: 3, md: 4 } }}>
           <Logo />
         </Box>
         
-        <Typography variant="h1" sx={{ mb: 3, fontWeight: 'bold', fontSize: { xs: '4rem', sm: '6rem', md: '8rem' } }}>
+        <Typography variant="h1" sx={{ 
+          mb: { xs: 2, sm: 2.5, md: 3 }, 
+          fontWeight: 'bold', 
+          fontSize: { xs: '3rem', sm: '5rem', md: '8rem' },
+          lineHeight: 1,
+        }}>
           404
         </Typography>
         
-        <Typography variant="h4" sx={{ mb: 2, fontWeight: 'bold' }}>
+        <Typography variant="h4" sx={{ 
+          mb: { xs: 1.5, sm: 2 }, 
+          fontWeight: 'bold',
+          fontSize: { xs: '1.5rem', sm: '2rem', md: '2.125rem' },
+        }}>
           Pagina Non Trovata
         </Typography>
         
-        <Typography variant="h6" sx={{ mb: 4, opacity: 0.9 }}>
+        <Typography variant="h6" sx={{ 
+          mb: { xs: 2, sm: 3, md: 4 }, 
+          opacity: 0.9,
+          fontSize: { xs: '1rem', sm: '1.25rem', md: '1.5rem' },
+        }}>
           Sembra che tu abbia perso la strada...
         </Typography>
         
-        <Typography variant="body1" sx={{ mb: 6, opacity: 0.8, maxWidth: 600, mx: 'auto' }}>
+        <Typography variant="body1" sx={{ 
+          mb: { xs: 4, sm: 5, md: 6 }, 
+          opacity: 0.8, 
+          maxWidth: 600, 
+          mx: 'auto',
+          fontSize: { xs: '0.875rem', sm: '1rem' },
+          lineHeight: { xs: 1.6, sm: 1.75 },
+        }}>
           La pagina che stai cercando non esiste o è stata spostata.
           Torna alla home per continuare l'esplorazione del meteo mondiale.
           l'importante è non cercare mai la californai 
         </Typography>
         
-        <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', flexWrap: 'wrap' }}>
+        <Box sx={{ 
+          display: 'flex', 
+          gap: { xs: 1.5, sm: 2 }, 
+          justifyContent: 'center', 
+          flexWrap: 'wrap',
+          flexDirection: { xs: 'column', sm: 'row' },
+          alignItems: 'stretch',
+        }}>
           <Button
             variant="contained"
             size="large"
             onClick={() => navigate('/')}
             sx={{
-              px: 6,
-              py: 1.5,
-              fontSize: '1.2rem',
+              px: { xs: 4, sm: 5, md: 6 },
+              py: { xs: 1.25, sm: 1.5 },
+              fontSize: { xs: '1rem', sm: '1.1rem', md: '1.2rem' },
               backgroundColor: 'white',
               color: '#667eea',
+              width: { xs: '100%', sm: 'auto' },
               '&:hover': {
                 backgroundColor: 'rgba(255, 255, 255, 0.9)',
               },
@@ -69,11 +97,12 @@ export default function NotFoundPage() {
             size="large"
             onClick={() => navigate('/explore')}
             sx={{
-              px: 6,
-              py: 1.5,
-              fontSize: '1.2rem',
+              px: { xs: 4, sm: 5, md: 6 },
+              py: { xs: 1.25, sm: 1.5 },
+              fontSize: { xs: '1rem', sm: '1.1rem', md: '1.2rem' },
               borderColor: 'white',
               color: 'white',
+              width: { xs: '100%', sm: 'auto' },
               '&:hover': {
                 borderColor: 'rgba(255, 255, 255, 0.8)',
                 backgroundColor: 'rgba(255, 255, 255, 0.1)',

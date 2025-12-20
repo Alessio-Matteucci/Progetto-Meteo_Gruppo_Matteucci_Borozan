@@ -41,7 +41,7 @@ export default function SearchBar({ onCitySelect }) {
   };
 
   return (
-    <Box ref={searchBarRef} sx={{ position: 'relative', width: '100%', maxWidth: 600, mx: 'auto' }}>
+    <Box ref={searchBarRef} sx={{ position: 'relative', width: '100%', maxWidth: { xs: '100%', sm: 600 }, mx: 'auto' }}>
       <TextField
         fullWidth
         variant="outlined"
@@ -59,6 +59,7 @@ export default function SearchBar({ onCitySelect }) {
                 onClick={handleSearchClick}
                 sx={{
                   color: 'rgba(255, 255, 255, 0.7)',
+                  padding: { xs: '8px', sm: '12px' },
                   '&:hover': {
                     color: 'white',
                     backgroundColor: 'rgba(102, 126, 234, 0.2)',
@@ -66,7 +67,7 @@ export default function SearchBar({ onCitySelect }) {
                 }}
                 disabled={searchTerm.trim().length === 0}
               >
-                <SearchIcon />
+                <SearchIcon sx={{ fontSize: { xs: '20px', sm: '24px' } }} />
               </IconButton>
             </InputAdornment>
           ),
@@ -76,10 +77,11 @@ export default function SearchBar({ onCitySelect }) {
             backgroundColor: 'rgba(26, 26, 46, 0.6)',
             backdropFilter: 'blur(10px)',
             color: 'white',
-            borderRadius: '16px',
+            borderRadius: { xs: '12px', sm: '16px' },
             border: '1px solid rgba(102, 126, 234, 0.2)',
             transition: 'all 200ms ease',
-            paddingRight: '8px',
+            paddingRight: { xs: '4px', sm: '8px' },
+            fontSize: { xs: '14px', sm: '16px' },
             '& fieldset': {
               borderColor: 'rgba(102, 126, 234, 0.3)',
             },
@@ -88,14 +90,15 @@ export default function SearchBar({ onCitySelect }) {
             },
             '&.Mui-focused fieldset': {
               borderColor: 'rgba(102, 126, 234, 0.8)',
-              borderWidth: '2px',
+              borderWidth: { xs: '1px', sm: '2px' },
             },
             '&.Mui-focused': {
-              boxShadow: '0 0 0 4px rgba(102, 126, 234, 0.1)',
+              boxShadow: { xs: '0 0 0 2px rgba(102, 126, 234, 0.1)', sm: '0 0 0 4px rgba(102, 126, 234, 0.1)' },
             },
           },
           '& .MuiInputBase-input::placeholder': {
             color: 'rgba(255, 255, 255, 0.5)',
+            fontSize: { xs: '14px', sm: '16px' },
           },
         }}
       />
@@ -111,8 +114,8 @@ export default function SearchBar({ onCitySelect }) {
         {showResults && results.length > 0 && (
           <Paper
             sx={{
-              borderRadius: '16px',
-              maxHeight: 300,
+              borderRadius: { xs: '12px', sm: '16px' },
+              maxHeight: { xs: 250, sm: 300 },
               overflow: 'auto',
               backgroundColor: 'rgba(26, 26, 46, 0.95)',
               backdropFilter: 'blur(20px)',
@@ -120,44 +123,52 @@ export default function SearchBar({ onCitySelect }) {
               boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
             }}
           >
-            <Box sx={{ p: 1 }}>
+            <Box sx={{ p: { xs: 0.5, sm: 1 } }}>
               <Typography sx={{ 
                 color: 'rgba(255, 255, 255, 0.8)', 
-                px: 2, 
-                py: 1, 
-                fontSize: '0.875rem',
+                px: { xs: 1.5, sm: 2 }, 
+                py: { xs: 0.75, sm: 1 }, 
+                fontSize: { xs: '0.75rem', sm: '0.875rem' },
                 fontWeight: 600,
                 letterSpacing: '0.5px',
               }}>
                 Suggerimenti
               </Typography>
             </Box>
-            <List>
+            <List sx={{ py: 0 }}>
               {results.map((city, index) => (
                 <ListItem
                   key={index}
                   button
                   onClick={() => handleCityClick(city)}
                   sx={{
-                    borderRadius: '12px',
-                    mx: 1,
-                    mb: 0.5,
+                    borderRadius: { xs: '8px', sm: '12px' },
+                    mx: { xs: 0.5, sm: 1 },
+                    mb: { xs: 0.25, sm: 0.5 },
+                    py: { xs: 0.75, sm: 1 },
                     transition: 'all 200ms ease',
                     '&:hover': {
                       backgroundColor: 'rgba(102, 126, 234, 0.15)',
-                      transform: 'translateX(4px)',
+                      transform: { xs: 'translateX(2px)', sm: 'translateX(4px)' },
                     },
                   }}
                 >
                   <ListItemText
                     primary={
-                      <Typography sx={{ color: 'white', textTransform: 'capitalize' }}>
+                      <Typography sx={{ 
+                        color: 'white', 
+                        textTransform: 'capitalize',
+                        fontSize: { xs: '0.875rem', sm: '1rem' },
+                      }}>
                         {city.name}
                         {city.admin1 && `, ${city.admin1}`}
                       </Typography>
                     }
                     secondary={
-                      <Typography sx={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '0.85rem' }}>
+                      <Typography sx={{ 
+                        color: 'rgba(255, 255, 255, 0.7)', 
+                        fontSize: { xs: '0.75rem', sm: '0.85rem' },
+                      }}>
                         {city.country}
                       </Typography>
                     }

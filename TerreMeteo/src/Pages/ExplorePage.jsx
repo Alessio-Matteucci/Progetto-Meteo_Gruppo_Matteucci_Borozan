@@ -30,18 +30,19 @@ export default function ExplorePage() {
         overflow: 'hidden',
       }}
     >
-      <Container maxWidth="xl" sx={{ py: 4 }}>
+      <Container maxWidth="xl" sx={{ py: { xs: 2, sm: 3, md: 4 }, px: { xs: 1, sm: 2, md: 3 } }}>
         {/* Barra di ricerca - posizionata sopra la mappa in modo assoluto */}
         <Box 
           sx={{ 
-            position: 'absolute',
-            top: 20,
-            left: '50%',
-            transform: 'translateX(-50%)',
+            position: { xs: 'relative', sm: 'absolute' },
+            top: { xs: 'auto', sm: 20 },
+            left: { xs: 'auto', sm: '50%' },
+            transform: { xs: 'none', sm: 'translateX(-50%)' },
             width: '100%',
-            maxWidth: 600,
+            maxWidth: { xs: '100%', sm: 600 },
             zIndex: 10,
-            px: 2,
+            px: { xs: 1, sm: 2 },
+            mb: { xs: 2, sm: 0 },
           }}
         >
           <SearchBar onCitySelect={handleLocationSelect} />
@@ -50,12 +51,12 @@ export default function ExplorePage() {
         {/* Globo 3D */}
         <Box
           sx={{
-            height: '60vh',
-            minHeight: 500,
+            height: { xs: '40vh', sm: '50vh', md: '60vh' },
+            minHeight: { xs: 300, sm: 400, md: 500 },
             position: 'relative',
-            mb: 4,
-            mt: 10,
-            borderRadius: '12px',
+            mb: { xs: 2, sm: 3, md: 4 },
+            mt: { xs: 2, sm: 8, md: 10 },
+            borderRadius: { xs: '8px', sm: '12px' },
             overflow: 'hidden',
             boxShadow: '0 20px 60px rgba(0, 0, 0, 0.5)',
           }}

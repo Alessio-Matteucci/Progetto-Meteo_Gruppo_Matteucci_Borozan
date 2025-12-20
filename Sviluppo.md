@@ -58,9 +58,34 @@ Matteucci: Implementazione del popup informativo accanto al marker e miglioramen
 - Barra di ricerca si chiude automaticamente quando viene eseguita una ricerca (clic bottone o Enter)
 - Gestione del click fuori dalla barra di ricerca per chiudere i risultati
 - Popup non si riapre automaticamente se è stato chiuso manualmente con la X
+- implementazione funzioni reactive 
 
 File modificati:{
     Globo3D.jsx (aggiunto MarkerInfoPopup, gestione posizionamento popup, reset camera)
     SearchBar.jsx (aggiunto bottone cerca, gestione chiusura automatica)
     ExplorePage.jsx (gestione reset visuale, posizionamento barra di ricerca)
 }
+
+
+
+
+problemi incontrati:
+Problema: globo non in grado di ricercare i punti correttamente 
+--soluzione: andare a cambiare il modello di riferimento con il globo e usare le coordinate della sfera di base invece che le % della sua area 
+
+Problema: i bottoni delle città popolari non erano distribuiti uniformemente, creando spazi vuoti su schermi grandi
+soluzione: implementare un layout responsive con flexbox che usa space-evenly su schermi grandi e flex-start con scroll orizzontale su mobile, aggiungendo anche minWidth e maxWidth per controllare le dimensioni dei bottoni
+
+Problema: codice duplicato e logica sparsa tra i componenti, rendendo difficile la manutenzione
+soluzione: estrarre la logica comune in custom hooks nella cartella hooks/, creando useCitySearch, useClickOutside, useWeatherData, useLocationSelection e utility per conversioni coordinate, rendendo il codice più modulare e riutilizzabile
+
+Problema: la barra di ricerca non si chiudeva automaticamente dopo la selezione di una città
+soluzione: aggiungere gestione dello stato showResults che si resetta quando viene selezionata una città o quando si clicca fuori dalla barra, utilizzando il hook useClickOutside per rilevare i click esterni
+
+Problema: il popup del marker si riapriva automaticamente anche dopo essere stato chiuso manualmente dall'utente
+soluzione: implementare un flag manuallyClosed che impedisce la riapertura automatica del popup se l'utente lo ha chiuso volontariamente, resettando il flag solo quando cambiano le coordinate selezionate 
+
+
+decisioni intraprese durante lo sviluppo del progetto:
+rispetto alla nostra relazione abbiamo deciso per comodità di andare a dividere l'interfaccia in 3 parti, la barra di ricerca, lo spazio 3d di three js e la barra con alcuni luoghi di esempio con i "posti più cercati" , invece di fare tutto sull'interfaccia 3d, abbiamo deciso di aggiungere una sezione nuova che serve a visualizzare i dettagli completi del meteo in maniera estesa.
+per il resto lo schema del progetto con struttura, tecnologie e librerie usate rimane fedele alla documentazione fornita in precedenza
