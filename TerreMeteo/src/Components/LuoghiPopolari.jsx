@@ -27,12 +27,12 @@ export default function PopularLocations({ onLocationSelect }) {
   return (
     <Box 
       sx={{ 
-        mt: 4, 
-        mb: 4,
+        mt: { xs: 2, sm: 3, md: 4 }, 
+        mb: { xs: 2, sm: 3, md: 4 },
         backgroundColor: 'rgba(26, 26, 46, 0.6)',
         backdropFilter: 'blur(10px)',
-        borderRadius: '16px',
-        padding: '20px',
+        borderRadius: { xs: '12px', sm: '16px' },
+        padding: { xs: '12px', sm: '16px', md: '20px' },
         boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
         border: '1px solid rgba(102, 126, 234, 0.2)',
       }}
@@ -40,14 +40,14 @@ export default function PopularLocations({ onLocationSelect }) {
       {/* Parte superiore con div più opaco */}
       <Box
         sx={{
-          mb: 2,
+          mb: { xs: 1.5, sm: 2 },
         }}
       >
         <Box
           sx={{
             background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%)',
-            borderRadius: '12px',
-            padding: '12px 16px',
+            borderRadius: { xs: '10px', sm: '12px' },
+            padding: { xs: '10px 12px', sm: '12px 16px' },
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -57,7 +57,7 @@ export default function PopularLocations({ onLocationSelect }) {
           <Typography 
             sx={{ 
               color: 'rgba(255, 255, 255, 0.95)',
-              fontSize: '16px',
+              fontSize: { xs: '14px', sm: '15px', md: '16px' },
               fontWeight: 600,
               textAlign: 'center',
               letterSpacing: '0.5px',
@@ -72,15 +72,15 @@ export default function PopularLocations({ onLocationSelect }) {
       <Box
         sx={{
           display: 'flex',
-          gap: { xs: '10px', sm: '14px', md: '18px' },
-          padding: '16px',
+          gap: { xs: '8px', sm: '12px', md: '16px' },
+          padding: { xs: '8px', sm: '12px', md: '16px' },
           overflowX: 'auto',
           WebkitOverflowScrolling: 'touch',
           alignItems: 'center',
           justifyContent: { xs: 'flex-start', sm: 'space-evenly' },
           flexWrap: { xs: 'nowrap', sm: 'wrap' },
           '&::-webkit-scrollbar': {
-            height: '6px',
+            height: { xs: '4px', sm: '6px' },
           },
           '&::-webkit-scrollbar-track': {
             background: 'rgba(0, 0, 0, 0.2)',
@@ -104,21 +104,21 @@ export default function PopularLocations({ onLocationSelect }) {
               alignItems: 'center',
               justifyContent: 'center',
               gap: '8px',
-              padding: { xs: '14px 24px', sm: '16px 28px', md: '18px 32px' },
+              padding: { xs: '10px 16px', sm: '14px 24px', md: '18px 32px' },
               borderRadius: '9999px',
               background: 'rgba(102, 126, 234, 0.15)',
               border: '1px solid rgba(102, 126, 234, 0.3)',
-              fontSize: { xs: '16px', sm: '17px', md: '18px' },
+              fontSize: { xs: '14px', sm: '16px', md: '18px' },
               fontWeight: 600,
               whiteSpace: 'nowrap',
               color: 'rgba(255, 255, 255, 0.9)',
               textTransform: 'none',
               transition: 'all 200ms ease',
               flex: { xs: '0 0 auto', sm: '1 1 auto' },
-              minWidth: { xs: 'fit-content', sm: '120px', md: '140px' },
-              maxWidth: { sm: '200px', md: '220px' },
+              minWidth: { xs: 'fit-content', sm: '100px', md: '140px' },
+              maxWidth: { sm: '180px', md: '220px' },
               '&:hover': {
-                transform: 'translateY(-2px)',
+                transform: { xs: 'translateY(-1px)', sm: 'translateY(-2px)' },
                 boxShadow: '0 8px 24px rgba(102, 126, 234, 0.4)',
                 backgroundColor: 'rgba(102, 126, 234, 0.25)',
                 borderColor: 'rgba(102, 126, 234, 0.5)',
